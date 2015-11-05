@@ -22,7 +22,7 @@ NSString * const SVProgressHUDDidAppearNotification = @"SVProgressHUDDidAppearNo
 
 NSString * const SVProgressHUDStatusUserInfoKey = @"SVProgressHUDStatusUserInfoKey";
 
-static const CGFloat SVProgressHUDRingRadius = 18;
+static const CGFloat SVProgressHUDRingRadius = 27;
 static const CGFloat SVProgressHUDRingNoTextRadius = 24;
 static const CGFloat SVProgressHUDParallaxDepthPoints = 10;
 static const CGFloat SVProgressHUDUndefinedProgress = -1;
@@ -91,7 +91,7 @@ static const CGFloat SVProgressHUDUndefinedProgress = -1;
     BOOL _isInitializing;
 }
 
-+ (SVProgressHUD*)sharedView{
++ (SVProgressHUD*)sharedView {
     static dispatch_once_t once;
     
     static SVProgressHUD *sharedView;
@@ -349,8 +349,8 @@ static const CGFloat SVProgressHUDUndefinedProgress = -1;
 }
 
 - (void)updateHUDFrame{
-    CGFloat hudWidth = 100.0f;
-    CGFloat hudHeight = 100.0f;
+    CGFloat hudWidth = 160.0f;
+    CGFloat hudHeight = 160.0f;
     CGFloat stringHeightBuffer = 20.0f;
     CGFloat stringAndContentHeightBuffer = 80.0f;
     CGRect labelRect = CGRectZero;
@@ -388,19 +388,24 @@ static const CGFloat SVProgressHUDUndefinedProgress = -1;
         CGFloat stringHeight = ceilf(CGRectGetHeight(stringRect));
         
         if(imageUsed || progressUsed){
-            hudHeight = stringAndContentHeightBuffer + stringHeight;
+//            hudHeight = stringAndContentHeightBuffer + stringHeight;
         } else{
-            hudHeight = stringHeightBuffer + stringHeight;
+
+        }
+        if (stringHeight > 50) {
+            hudHeight += stringHeight;
+            hudWidth = hudHeight;
+            
         }
         if(stringWidth > hudWidth){
             hudWidth = ceilf(stringWidth/2)*2;
+            hudHeight = hudWidth;
         }
-        CGFloat labelRectY = (imageUsed || progressUsed) ? 68.0f : 9.0f;
+        
+        CGFloat labelRectY = hudHeight - stringHeight - 20;
         if(hudHeight > 100.0f){
-            labelRect = CGRectMake(12.0f, labelRectY, hudWidth, stringHeight);
-            hudWidth += 24.0f;
+            labelRect = CGRectMake(0.0f, labelRectY, hudWidth, stringHeight);
         } else{
-            hudWidth += 24.0f;
             labelRect = CGRectMake(0.0f, labelRectY, hudWidth, stringHeight);
         }
     }
@@ -409,7 +414,7 @@ static const CGFloat SVProgressHUDUndefinedProgress = -1;
     [self updateBlurBounds];
     
     if(string){
-        self.imageView.center = CGPointMake(CGRectGetWidth(self.hudView.bounds)/2, 36.0f);
+        self.imageView.center = CGPointMake((CGRectGetWidth(self.hudView.bounds)/2), CGRectGetHeight(self.hudView.bounds) / 2.5);
     } else{
        	self.imageView.center = CGPointMake(CGRectGetWidth(self.hudView.bounds)/2, CGRectGetHeight(self.hudView.bounds)/2);
     }
@@ -428,7 +433,7 @@ static const CGFloat SVProgressHUDUndefinedProgress = -1;
             [indefiniteAnimationView sizeToFit];
         }
         
-        CGPoint center = CGPointMake((CGRectGetWidth(self.hudView.bounds)/2), 36.0f);
+        CGPoint center = CGPointMake((CGRectGetWidth(self.hudView.bounds)/2), CGRectGetHeight(self.hudView.bounds) / 2.5);
         self.indefiniteAnimatedView.center = center;
         
         if(self.progress != SVProgressHUDUndefinedProgress){
@@ -725,9 +730,10 @@ static const CGFloat SVProgressHUDUndefinedProgress = -1;
     [self updateMask];
 }
 
-- (void)moveToPoint:(CGPoint)newCenter rotateAngle:(CGFloat)angle{
+- (void)moveToPoint:(CGPoint)newCenter rotateAngle:(CGFloat)angle {
     self.hudView.transform = CGAffineTransformMakeRotation(angle);
-    self.hudView.center = CGPointMake(newCenter.x + self.offsetFromCenter.horizontal, newCenter.y + self.offsetFromCenter.vertical);
+    // self.hudView.center = CGPointMake(newCenter.x + self.offsetFromCenter.horizontal, newCenter.y + self.offsetFromCenter.vertical);
+    self.hudView.center = CGPointMake(([UIScreen mainScreen].bounds.size.width)/2, ([UIScreen mainScreen].bounds.size.height)/2);
 }
 
 
@@ -1254,4 +1260,3 @@ static const CGFloat SVProgressHUDUndefinedProgress = -1;
 }
 
 @end
-
