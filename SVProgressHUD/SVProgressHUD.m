@@ -362,7 +362,7 @@ static const CGFloat SVProgressHUDUndefinedProgress = -1;
     // Calculate and apply sizes
     NSString *string = self.stringLabel.text;
     if(string){
-        CGSize constraintSize = CGSizeMake(200.0f, 300.0f);
+        CGSize constraintSize = CGSizeMake(hudWidth, 300.0f);
         CGRect stringRect;
         if([string respondsToSelector:@selector(boundingRectWithSize:options:attributes:context:)]){
             stringRect = [string boundingRectWithSize:constraintSize
@@ -392,14 +392,16 @@ static const CGFloat SVProgressHUDUndefinedProgress = -1;
         } else{
 
         }
-        if (stringHeight > 50) {
-            hudHeight += stringHeight;
-            hudWidth = hudHeight;
-            
-        }
+        
         if(stringWidth > hudWidth){
             hudWidth = ceilf(stringWidth/2)*2;
             hudHeight = hudWidth;
+        }
+        
+        if (stringHeight > 50 && stringHeight > hudHeight) {
+            hudHeight += stringHeight;
+            hudWidth = hudHeight;
+            
         }
         
         CGFloat labelRectY = hudHeight - stringHeight - 20;
